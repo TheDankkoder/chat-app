@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Repository</title>
+  <style>  
+    .container {
+      width: 80%;
+      margin: 1rem auto;
+    }
+    
+    .text-justify {
+      text-align: justify;
+    }
+  </style>
+</head>
+
+<body>
+
+  
+  <div class="container">
+    <center>
+        <form action="/upload" enctype="multipart/form-data" method="POST">
+            <input type="file" name="myImage" accept="image/*">
+            <input type="submit" value="Upload Photo" id = "submit-btn">
+        </form>
+          
+      
+      
+    </center>
+  </div>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script>  
+    var socket = io();
+    var btn = document.getElementById( 'upvote-btn' );
+    var upvote_val = false;
+     
+    var submit_btn = document.getElementById('submit-btn');
+
+    /* submit_btn.addEventListener( 'click', function( e ) {
+      e.preventDefault();   // prevent page reloading
+      
+    });  */ 
+
+    
+    btn.addEventListener( 'click', function(e)
+    {
+      e.preventDefault();   // prevent page reloading
+      
+      upvote_val = upvote_val ? false: true;
+      
+      socket.emit( 'upvote-event', upvote_val );
+    });
+    
+    socket.on( 'update-upvotes', function( f_str ) {
+      document.getElementById( 'upvote-count' ).innerHTML = f_str;
+    });
+  </script>
+</body>
+</html>
