@@ -1,10 +1,11 @@
-var app     = require( 'express' )();
+
 var http    = require( 'http' ).createServer( app );
 var io      = require( 'socket.io' )( http );
 
-const multer = require('multer');
+const fs = require("fs");
+
 const bodyParser = require('body-parser');
-const Post = require('./models/post');
+const Image = require('./models/image');
 
 const mongoose = require('mongoose')
 const url = "mongodb://127.0.0.1:27017/local"
@@ -14,16 +15,27 @@ const url = "mongodb://127.0.0.1:27017/local"
 mongoose.connect(url, {useNewUrlParser:true})
 const con = mongoose.connection
 
+
 con.on('open', () => {
     console.log('connected...')
 })
 
 
+var app = require( 'express' )();
+
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+
+
+
+const multer = require('multer');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './uploads/');
     },
     filename: function (req, file, cb) {
+      console.log(file)
       cb(null, file.originalname);
     }
   });
@@ -36,52 +48,73 @@ const PORT = 3000;
 
 
 
-
-app.use(bodyParser.urlencoded({
-    extended: false
- }));
-
 app.get( '/', function( req, res ) { 
     res.sendFile( __dirname + '/public/index.html' );
 }); 
 
 
-app.get( '/view', function( req, res ) { 
-    Post.find((error, people) => {
-        if (error) {
-          res.send(error);
-        } else {
-          res.send(people);
-        }
-      });
-});
 
-app.post("/upload",upload.single('myImage'),(req,res)=>{
-    var img = fs.readFileSync(req.file.path);
-    var encode_img = img.toString('base64');
-    var final_img = {
-        contentType:req.file.mimetype,
-        image:new Buffer(encode_img,'base64')
-    };
-    imageModel.create(final_img,function(err,result){
+app.get("/view", (req, res) => {
+    Image.find({}, "name", (err, images) => {
+      if (err) {
+        console.log(err);
+      } else {
+        let imagesArray = [];
+        images.forEach(function(image)
+        {
+          imagesArray.push(image);
+        });
+        res.send(imagesArray);
+        }
+      
+    });
+  });
+
+
+
+app.post("/upload",upload.single('image'),(req,res)=>{
+    console.log(req)
+    var base_img = fs.readFileSync(req.file.path);
+    var encode_img = base_img.toString('base64');
+    const final_img = new Image(
+    {
+        name: req.body.name,
+        img :
+        {
+            data:new Buffer(encode_img,'base64'),
+            contentType:req.file.mimetype
+            
+        }
+        
+    });
+    final_img
+    .save()
+    .then(() => res.redirect("/"))
+    .catch((err) => res.status(400).json("Error: " + err));
+
+})
+
+
+app.get("/download/:id", (req, res) => {
+    Image.findById(req.params.id,function(err,result){
         if(err){
             console.log(err);
         }else{
-            console.log(result.img.Buffer);
-            console.log("Saved To database");
-            res.contentType(final_img.contentType);
-            res.send(final_img.image);
+            console.log(result);
+            res.contentType(result.img.contentType);
+            res.send(result.img.data);
         }
     })
-})
-
+      
+  });
+  
 
 http.listen( PORT, function() {
     console.log( 'listening on *:' + PORT );
 });
 
 
-var upvote_count = 0;
+
 io.on( 'connection', function( socket ) {
     console.log( 'a user has connected!' );
     
@@ -89,10 +122,4 @@ io.on( 'connection', function( socket ) {
         console.log( 'user disconnected' );
     });
     
-    socket.on( 'upvote-event', function( upvote_flag ) {
-        upvote_count += upvote_flag ? 1: -1;
-        var f_str = upvote_count + ( upvote_count == 1 ? ' upvote': ' upvotes');
-        
-        io.emit( 'update-upvotes', f_str );
-    });
 });

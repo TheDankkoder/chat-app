@@ -1,21 +1,20 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const url = "mongodb://127.0.0.1:27017/local"
-
-const app = express()
-
-mongoose.connect(url, {useNewUrlParser:true})
-const con = mongoose.connection
-
-con.on('open', () => {
-    console.log('connected...')
+const btn = document.getElementById("view-btn");
+console.log(btn);
+btn.addEventListener('click', async function (e) {
+    e.preventDefault();
+    
+    const response = await fetch("http://localhost:3000/view");
+    makeImages(response)
+    
 })
 
-app.use(express.json())
+const makeImages = (images) => {
+    for (let result of imagers) {
+        if (result.show.image) {
+            const img = document.createElement('IMG');
+            img.src = result.show.image.medium;
+            document.body.append(img)
+        }
+    }
+}
 
-const router = require('./routes/routes.js')
-app.use('/',router)
-
-app.listen(9000, () => {
-    console.log('Server started')
-})
