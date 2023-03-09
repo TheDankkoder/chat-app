@@ -5,12 +5,10 @@ import { VStack } from "@chakra-ui/layout";
 import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
-import { useHistory } from "react-router-dom";
-
-import React from 'react'
+import { useHistory} from "react-router-dom";
 
 const Login = () => {
-    const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
   const [email, setEmail] = useState();
@@ -32,6 +30,8 @@ const Login = () => {
       setLoading(false);
       return;
     }
+
+    // console.log(email, password);
     try {
       const config = {
         headers: {

@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Container,
@@ -10,24 +9,24 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { useHistory } from "react-router";
+import { useHistory} from "react-router";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
 
-const Homepage = () => {
+function Homepage() {
 
-  const history = useHistory();
+    const history = useHistory();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
 
     if (user) history.push("/chats");
-  }, [history]);
-  
+  }, [history]); 
+
   return (
     <Container maxW="xl" centerContent>
       <Box
-        d="flex"
+        display="flex"
         justifyContent="center"
         p={3}
         bg="white"
@@ -37,10 +36,10 @@ const Homepage = () => {
         borderWidth="1px"
       >
         <Text fontSize="4xl" fontFamily="Work sans">
-          Talk-A-Tive
+          Chat-App
         </Text>
       </Box>
-      <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
+      <Box bg="white" w="100%" p={4} borderRadius="1g" borderWidth="1px">
         <Tabs isFitted variant="soft-rounded">
           <TabList mb="1em">
             <Tab>Login</Tab>
@@ -57,7 +56,7 @@ const Homepage = () => {
         </Tabs>
       </Box>
     </Container>
-  )
+  );
 }
 
-export default Homepage
+export default Homepage;

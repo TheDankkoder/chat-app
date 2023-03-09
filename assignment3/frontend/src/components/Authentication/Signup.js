@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
@@ -9,7 +8,6 @@ import { useState } from "react";
 import { useHistory } from "react-router";
 
 const Signup = () => {
-
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
@@ -104,7 +102,7 @@ const Signup = () => {
       data.append("file", pics);
       data.append("upload_preset", "chat-app");
       data.append("cloud_name", "piyushproj");
-      fetch("https://api.cloudinary.com/v1_1/dypz9v693", {
+      fetch("https://api.cloudinary.com/v1_1/piyushproj/image/upload", {
         method: "post",
         body: data,
       })
@@ -130,7 +128,6 @@ const Signup = () => {
       return;
     }
   };
-
 
   return (
     <VStack spacing="5px">
@@ -199,6 +196,6 @@ const Signup = () => {
       </Button>
     </VStack>
   );
-}
+};
 
-export default Signup
+export default Signup;

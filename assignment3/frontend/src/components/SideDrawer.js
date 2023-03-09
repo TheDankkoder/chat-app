@@ -1,5 +1,3 @@
-
-
 import { Button } from "@chakra-ui/button";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { Input } from "@chakra-ui/input";
@@ -25,14 +23,14 @@ import { useHistory } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/toast";
-import ChatLoading from "../ChatLoading";
+import ChatLoading from "./ChatLoading";
 import { Spinner } from "@chakra-ui/spinner";
 import ProfileModal from "./ProfileModal";
 import NotificationBadge from "react-notification-badge";
 import { Effect } from "react-notification-badge";
-import { getSender } from "../../config/ChatLogics";
-import UserListItem from "../userAvatar/UserListItem";
-import { ChatState } from "../../Context/ChatProvider";
+import { getSender } from "../config/ChatLogics";
+import UserListItem from "./UserListItem";
+import { ChatState } from "../Context/ChatProvider";
 
 function SideDrawer() {
   const [search, setSearch] = useState("");
@@ -53,10 +51,13 @@ function SideDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const history = useHistory();
 
+  
+
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
     history.push("/");
   };
+
 
   const handleSearch = async () => {
     if (!search) {
@@ -95,8 +96,10 @@ function SideDrawer() {
     }
   };
 
+  
+
   const accessChat = async (userId) => {
-    console.log(userId);
+   console.log(userId);
 
     try {
       setLoadingChat(true);
@@ -127,7 +130,7 @@ function SideDrawer() {
   return (
     <>
       <Box
-        d="flex"
+        display="flex"
         justifyContent="space-between"
         alignItems="center"
         bg="white"
@@ -144,17 +147,19 @@ function SideDrawer() {
           </Button>
         </Tooltip>
         <Text fontSize="2xl" fontFamily="Work sans">
-          Talk-A-Tive
+          Chat-App
         </Text>
         <div>
           <Menu>
             <MenuButton p={1}>
-              <NotificationBadge
+                
+               <NotificationBadge
                 count={notification.length}
                 effect={Effect.SCALE}
-              />
+  /> 
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
+            
             <MenuList pl={2}>
               {!notification.length && "No New Messages"}
               {notification.map((notif) => (
@@ -171,6 +176,7 @@ function SideDrawer() {
                 </MenuItem>
               ))}
             </MenuList>
+                  
           </Menu>
           <Menu>
             <MenuButton as={Button} bg="white" rightIcon={<ChevronDownIcon />}>
@@ -186,16 +192,19 @@ function SideDrawer() {
                 <MenuItem>My Profile</MenuItem>{" "}
               </ProfileModal>
               <MenuDivider />
-              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
+              <MenuItem onClick={logoutHandler} >Logout</MenuItem>
             </MenuList>
           </Menu>
         </div>
       </Box>
 
+      
+
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
+         
           <DrawerBody>
             <Box d="flex" pb={2}>
               <Input
@@ -206,21 +215,29 @@ function SideDrawer() {
               />
               <Button onClick={handleSearch}>Go</Button>
             </Box>
+
+            
+
             {loading ? (
               <ChatLoading />
             ) : (
-              searchResult?.map((user) => (
+              searchResult?.map((users) => (
                 <UserListItem
-                  key={user._id}
-                  user={user}
-                  handleFunction={() => accessChat(user._id)}
+                  key={users._id}
+                  user={users}
+                  handleFunction={() => accessChat(users._id)}
                 />
               ))
             )}
+            
             {loadingChat && <Spinner ml="auto" d="flex" />}
-          </DrawerBody>
+              
+            </DrawerBody>
+              
         </DrawerContent>
       </Drawer>
+
+           
     </>
   );
 }
